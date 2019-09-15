@@ -1,15 +1,32 @@
 var gamePattern = [];
 var userClickedPattern = [];
 var buttonColors = ["red", "blue", "green", "yellow"];
-var level;
+var level = 0;
+var start = false;
+
+// detect keypress to Start game
+
+$(document).keypress(function() {
+  if (!start) {
+    nextSequence();
+    start = true;
+  }
+});
+
 
 function nextSequence() {
+
+  // set to empty for each Level
+  userClickedPattern = [];
+
+  // generate random number
+
   var randomNumber = Math.floor(Math.random() * 4);
 
   // update level and heading
 
-  level+=1;
-  $("#level-title").html("Level "+level);
+  level++;
+  $("#level-title").html("Level " + level);
 
   // get random colour
 
@@ -18,44 +35,65 @@ function nextSequence() {
 
   // flash effect
 
-  $("#" + gamePattern[0]).fadeIn(100).fadeOut(100).fadeIn(100);
+  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
 
   // play audio
 
-  var randomChosenAudio = new Audio("sounds/" + gamePattern[0] + ".mp3");
-  randomChosenAudio.play();
+  playSound(randomChosenColour);
 
 }
 
-detectClick();
 
 //  detect click
 
-function detectClick() {
-  $(".btn").on("click", function() {
-    var userChosenColour = this.id;
-    userClickedPattern.push(userChosenColour);
-    playSound(userChosenColour);
-  });
+$(".btn").on("click", function() {
+  var userChosenColour = this.id;
+  userClickedPattern.push(userChosenColour);
+  playSound(userChosenColour);
+  animatePress(userChosenColour);
+  checkAnswer(userClickedPattern.length - 1);
+});
+
+// check answer
+
+function checkAnswer(currLevel) {
+
+  if (gamePattern[currLevel] === userClickedPattern[currLevel]) {
+    if (currLevel === level - 1) {
+      setTimeout(function() {
+        nextSequence();
+      }, 1000);
+
+    }
+  }
+
+  // game over
+  else {
+
+    var wrong= new Audio("sounds/wrong.mp3");
+    wrong.play();
+
+    $("body").addClass("game-over");
+    setTimeout(function() {
+      $("body").removeClass("game-over");
+    }, 200);
+
+    $("#level-title").html("Game Over, Press Any Key to Restart");
+  }
 }
 
-// play sound on user user
+
+
+// play sound on user click
 
 function playSound(name) {
   var userChosenAudio = new Audio("sounds/" + name + ".mp3");
   userChosenAudio.play();
-  animatePress(name);
 }
 
 function animatePress(currentColour) {
   $("." + currentColour).addClass("pressed");
   setTimeout(function() {
-    $("." + currentColour).removeClass("pressed")
+    $("." + currentColour).removeClass("pressed");
   }, 100);
-
 }
-
-
-// detect keypress to Start game
-
-$(document).one("keydown",level=0,nextSequence);
