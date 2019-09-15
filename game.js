@@ -54,6 +54,21 @@ $(".btn").on("click", function() {
   checkAnswer(userClickedPattern.length - 1);
 });
 
+// play sound on user click
+
+function playSound(name) {
+  var userChosenAudio = new Audio("sounds/" + name + ".mp3");
+  userChosenAudio.play();
+}
+
+function animatePress(currentColour) {
+  $("." + currentColour).addClass("pressed");
+  setTimeout(function() {
+    $("." + currentColour).removeClass("pressed");
+  }, 100);
+}
+
+
 // check answer
 
 function checkAnswer(currLevel) {
@@ -68,6 +83,7 @@ function checkAnswer(currLevel) {
   }
 
   // game over
+
   else {
 
     var wrong= new Audio("sounds/wrong.mp3");
@@ -79,21 +95,15 @@ function checkAnswer(currLevel) {
     }, 200);
 
     $("#level-title").html("Game Over, Press Any Key to Restart");
+
+    restartGame();
   }
 }
 
+// restart game
 
-
-// play sound on user click
-
-function playSound(name) {
-  var userChosenAudio = new Audio("sounds/" + name + ".mp3");
-  userChosenAudio.play();
-}
-
-function animatePress(currentColour) {
-  $("." + currentColour).addClass("pressed");
-  setTimeout(function() {
-    $("." + currentColour).removeClass("pressed");
-  }, 100);
+function restartGame() {
+  gamePattern= [];
+  level= 0;
+  start=false;
 }
